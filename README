@@ -1,0 +1,47 @@
+gen-min-lxc is a script for creating LXC containers that include only required
+binaries and libraries.
+
+
+Dependencies
+------------
+* Python 2.7
+* Envoy (https://github.com/kennethreitz/envoy, pip install envoy)
+
+
+Usage
+-----
+usage: gen-min-lxc.py [-h] (--copy DEST | --make-mountpoints DEST)
+                      [--fstab FSTAB] [--lxc-conf LXC_CONF] [--user-files]
+                      [--inittab]
+                      program [program ...]
+
+Helper for creating minimal LXC containers
+
+positional arguments:
+  program               path to a program or library that should be included
+                        in the container
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --copy DEST, -c DEST  copy specified programs and dependencies to the
+                        specified directory
+  --make-mountpoints DEST, -m DEST
+                        create mount points for programs and dependencies in
+                        the specified directory
+  --fstab FSTAB, -f FSTAB
+                        file to append fstab lines to
+  --lxc-conf LXC_CONF, -l LXC_CONF
+                        file to append lxc-configuration mount entries to
+  --user-files, -u      create user files (/etc/{passwd,group})
+  --inittab, -i         create basic inittab
+
+While it is allowed to specify both an fstab and an LXC configuration,
+there is generally no reason to do so, since only one is needed.
+
+If you need user capabilities, you need to supply at least libnsl and
+libnss_compat (and/or others, if configured in nsswitch.conf).
+
+
+License
+-------
+gen-min-lxc is released under the ISC license.
