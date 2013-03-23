@@ -142,6 +142,10 @@ libnss_compat (and/or others, if configured in nsswitch.conf).""")
 
         mount_lines.append('{} {} none ro,bind 0 0\n'.format(f, dst_path))
 
+    # Although not documented, os.mknod uses the umask (on some platforms).
+    # As such, we clear it to get the expected results.
+    os.umask(0)
+
     mkdir_p(os.path.join(dest_dir, 'dev/pts'))
     os.chmod(os.path.join(dest_dir, 'dev/pts'), 0755)
 
