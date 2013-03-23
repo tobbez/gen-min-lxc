@@ -54,6 +54,8 @@ def copy(src, dst):
         os.symlink(os.readlink(src), dst)
         #st = os.lstat(dst)
         os.lchown(dst, 0, 0)
+    elif os.path.isdir(src):
+        shutil.copytree(src, dst, symlinks=True)
     else:
         shutil.copy(src, dst)
         shutil.copystat(src, dst)
@@ -113,8 +115,9 @@ libnss_compat (and/or others, if configured in nsswitch.conf).""")
     args.program += ['/sbin/init', '/sbin/shutdown']
 
     for p in args.program:
-        files.append(p)
-        files.extend(ldd(p))
+        files.append(os.path.abspath(p))
+        if not os.path.isdir(p):
+            files.extend(ldd(p))
 
     derefs = []
     for f in files:
@@ -132,7 +135,10 @@ libnss_compat (and/or others, if configured in nsswitch.conf).""")
         if args.copy != None:
             copy(f, dst_path)
         elif args.make_mountpoints != None:
-            touch(dst_path)
+            if os.path.isdir(f):
+                mkdir_p(dst_path)
+            else:
+                touch(dst_path)
 
         mount_lines.append('{} {} none ro,bind 0 0\n'.format(f, dst_path))
 
